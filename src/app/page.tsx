@@ -1,4 +1,4 @@
-import { ObjectType } from "typescript"
+import TableData from "@/components/TableData";
 
 interface tableData {
   timestamp:number,
@@ -11,7 +11,7 @@ interface tableData {
 }
 
 export default function Home() {
-  const header = ["timestamp" , "purchase_id", "mail", "name", "source", "status", "select"]
+  const headers = ["timestamp" , "purchase_id", "mail", "name", "source", "status", "select"]
   const caption = "The Static Table"
   const data: tableData[] = [
     {
@@ -63,33 +63,10 @@ export default function Home() {
   ]
   return (
     <div className='flex items-center justify-center min-h-screen min-w-screen'>
-      <table>
-        <thead>
-          <tr>
-            {
-              header.map((column)=>(
-                <th key={column}>
-                  {column}
-                </th>
-              ))
-            }
-          </tr>
-        </thead>
-
-        <tbody>
-          {
-            data.map((row)=>(
-              <tr key={row.purchase_id}>
-                {
-                  header.map((column)=>(
-                    <td key={column}>{row[column]}</td>
-                  ))
-                }
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
+      <TableData
+       header={headers}
+       caption={caption}
+       rows={data}/>
     </div>
     )
 }
