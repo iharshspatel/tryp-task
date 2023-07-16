@@ -9,7 +9,7 @@ Let's list out Requirements:
 4. Required Rows
 5. non-required caption of type string
 6. non-required sorting property of type boolean
-7. non-required Pagination of  type boolean with Next - Prev Buttons
+7. non-required Pagination of type boolean with Next - Prev Buttons
 
 Bonus:
 1. Fetch Data from API
