@@ -4,7 +4,7 @@ import { sortedHeaderType, tableRow } from "@/types/tableRowTypes";
 import { useEffect, useState } from "react";
 import {BsArrowDownUp} from 'react-icons/bs'
 
-export default function TableData({ header, caption, rows, sortable=false }:TableDataProps) {
+export default function TableData({ header, caption, rows, sortable=false, pagination=false }:TableDataProps) {
 
   const [data, setData] = useState<tableRow[]>(rows);
   const [sortedHeader , setSortedHeader] = useState<sortedHeaderType>({});
@@ -72,9 +72,14 @@ export default function TableData({ header, caption, rows, sortable=false }:Tabl
   }
 
   useEffect(() => {
-    const startIndex = (currentPage - 1) * perPageRow;
-    const endIndex = startIndex + perPageRow;
-    setCurrentData(data.slice(startIndex, endIndex));
+    if(!pagination){
+      setCurrentData(data);
+    }
+    else{
+      const startIndex = (currentPage - 1) * perPageRow;
+      const endIndex = startIndex + perPageRow;
+      setCurrentData(data.slice(startIndex, endIndex));
+    }
   }, [currentPage, data, perPageRow]);
 
   return (
@@ -109,7 +114,7 @@ export default function TableData({ header, caption, rows, sortable=false }:Tabl
           ))}
         </tbody>
       </table>
-      <div className="w-full">
+      {pagination && <div className="w-full">
         <button className="border-black-300 bg-slate-300 text-black px-4 py-2 m-2 rounded hover:bg-slate-600 hover:text-white" onClick={prevPageHandler}>Prev</button>
         <button className="border-black-300 bg-slate-300 text-black px-4 py-2 m-2 rounded hover:bg-slate-600 hover:text-white" onClick={nextPageHandler}>Next</button>
         
@@ -119,7 +124,7 @@ export default function TableData({ header, caption, rows, sortable=false }:Tabl
           <option className="bg-white rounded" value={30}>30 per page</option>
           <option className="bg-white rounded" value={50}>50 per page</option>
         </select>
-      </div>
+      </div>}
     </div>
   );
 }
@@ -128,5 +133,6 @@ type TableDataProps = {
   header:string[],
   caption:string,
   rows:tableRow[],
-  sortable?:boolean
+  sortable?:boolean,
+  pagination?:boolean
 }

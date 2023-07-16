@@ -9,7 +9,8 @@ export default function Home() {
        header={headers}
        caption={caption}
        rows={rowsData}
-       sortable={false}/>
+       sortable={false}
+       pagination={true}/>
     </div>
     )
 }
