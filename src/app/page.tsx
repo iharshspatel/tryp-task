@@ -9,7 +9,7 @@ export default function Home() {
        header={headers}
        caption={caption}
        rows={rowsData}
-       sortable={true}/>
+       sortable={false}/>
     </div>
     )
 }
