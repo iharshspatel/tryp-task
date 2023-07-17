@@ -9,8 +9,10 @@ export default function TableData({ header, caption, rows, sortable=false, pagin
   const [data, setData] = useState<tableRow[]>(rows);
   const [sortedHeader , setSortedHeader] = useState<sortedHeaderType>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [perPageRow, setPerPageRow] = useState<number>(10);
+  const [perPageRow, setPerPageRow] = useState<number>(5);
   const [currentData, setCurrentData] = useState<tableRow[]>([])
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
 
   function headerClickHandler(column:string){
     if(sortable === false) return;
@@ -71,45 +73,92 @@ export default function TableData({ header, caption, rows, sortable=false, pagin
     setPerPageRow(e.target.value)
   }
 
+  function handleSearchChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setSearchQuery(event.target.value);
+  }
   useEffect(() => {
-    if(!pagination){
-      setCurrentData(data);
-    }
-    else{
+    if (!pagination) {
+      setCurrentData(
+        data.filter((row) =>
+          Object.values(row).some((value) =>
+            String(value).toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        )
+      );
+    } else {
+      const filteredData = data.filter((row) =>
+        Object.values(row).some((value) =>
+          String(value).toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
       const startIndex = (currentPage - 1) * perPageRow;
       const endIndex = startIndex + perPageRow;
-      setCurrentData(data.slice(startIndex, endIndex));
+      setCurrentData(filteredData.slice(startIndex, endIndex));
     }
-  }, [currentPage, data, perPageRow]);
+  }, [currentPage, data, perPageRow, pagination, searchQuery]);
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen min-w-screen  flex-col">
-      <table className="border-collapse border border-gray-300 table-fixed">
-        <caption className="text-xl font-bold mb-4">{caption}</caption>
+       <div className="w-full flex justify-between content-center">
+      { caption && <div className="text-xl font-bold mb-4">{caption}</div>}
+        <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Search..."
+            className="border border-gray-300 px-2 py-1 rounded mb-4"
+          />
+        </div>
+      <table className="border-collapse border border-gray-300 table-fixed rounded-lg">
         <thead>
           <tr className="bg-gray-200">
             {header.map((column) => (
-              <th key={column} className="py-2 px-4" onClick={()=>{headerClickHandler(column)}}>
+              <th key={column} className="py-4 px-4 uppercase text-slate-500 text-left" onClick={()=>{headerClickHandler(column)}}>
                 {column} {sortable ? <BsArrowDownUp className="inline mx-2"/> : ""}
               </th>
             ))}
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className="h-11 bg-white">
           {currentData.map((row, index) => (
             <tr
               key={row.purchase_id}
               className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
             >
-              {header.map((column) => (
-                <td
-                  key={column}
-                  className="py-2 px-4 border-b-2 border-gray-300"
-                >
-                  {row[column]}
-                </td>
-              ))}
+              {header.map((column) => {
+                if(column === 'select'){
+                  return (
+                    <td
+                      key={column}
+                      className="py-4 px-4 border-b-1 border-gray-300"
+                    >
+                      <button className="border-black-300 bg-slate-300 text-black px-4 py-2 m-2 rounded hover:bg-slate-600 hover:text-white">Select</button>
+                    </td>
+                  )
+                }
+                else if(column === 'status'){
+                  return (
+                    <td
+                      key={column}
+                      className="py-4 px-4 border-b-1 border-gray-300"
+                    >
+                      <p className={`border rounded-full text-center capitalize text-sm ${row[column] === 'success' ? 'bg-green-400 text-green-900' : 'bg-red-400 text-red-900' }`}>{row[column]}</p>
+                    </td>
+                  )
+                }
+                else{
+                  return (
+                    <td
+                      key={column}
+                      className="py-4 px-4 border-b-1 border-gray-300"
+                    >
+                      {row[column]}
+                    </td>
+                  )
+                }
+              })}
             </tr>
           ))}
         </tbody>
@@ -119,19 +168,22 @@ export default function TableData({ header, caption, rows, sortable=false, pagin
         <button className="border-black-300 bg-slate-300 text-black px-4 py-2 m-2 rounded hover:bg-slate-600 hover:text-white" onClick={nextPageHandler}>Next</button>
         
         <select value={perPageRow} onChange={handlePerPageChange} className="border-black-300 bg-slate-300 text-black px-4 py-2 m-2 rounded">
+        <option className="bg-white rounded" value={5}>5 per page</option>
           <option className="bg-white rounded" value={10}>10 per page</option>
           <option className="bg-white rounded" value={20}>20 per page</option>
           <option className="bg-white rounded" value={30}>30 per page</option>
           <option className="bg-white rounded" value={50}>50 per page</option>
         </select>
       </div>}
+
+
     </div>
   );
 }
 
 type TableDataProps = {
   header:string[],
-  caption:string,
+  caption?:string,
   rows:tableRow[],
   sortable?:boolean,
   pagination?:boolean
