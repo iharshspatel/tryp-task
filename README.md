@@ -1,6 +1,6 @@
 # tryp-task
 This repository contains DataTable Component with features like Pagination, Sorting which can be used to component to create abstract and consistent tables with advanced features.
-
+Live Demo on : https://tryp-task-umber.vercel.app/
 Let's list out Requirements:
 
 1. Next JS Project
