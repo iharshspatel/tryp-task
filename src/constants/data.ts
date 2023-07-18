@@ -1,6 +1,6 @@
-import { tableRow } from "@/types/tableRowTypes";
+import { TableRow } from "@/types/types";
 
-export const rowsData:tableRow[] = [
+export const rowsData:TableRow[] = [
     {
       "timestamp": 1642737600,
       "purchase_id": 1001,
